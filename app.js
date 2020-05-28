@@ -9,7 +9,7 @@ app.get("/api", (req, res) => {
   });
 });
 
-//use middleware functino 'verifyToken'
+//use middleware function 'verifyToken'
 app.post("/api/posts", verifyToken, (req, res) => {
   jwt.verify(req.token, "secretkey", (err, authData) => {
     //token is now in the req object.
@@ -32,7 +32,7 @@ app.post("/api/login", (req, res) => {
     email: "brad@gmail.com",
   };
 
-  //jwt.sign({payload}, "secretkey"), callback => {send json response containing the token}
+  //jwt.sign({payload - i.e. user}, "secretkey"), callback => {send json response containing the token}
   jwt.sign({ user: user }, "secretkey", { expiresIn: "30s" }, (err, token) => {
     //token expiration parameter is optional.
     res.json({
@@ -65,3 +65,17 @@ function verifyToken(req, res, next) {
 }
 
 app.listen(5000, () => console.log("Server started on port 5000"));
+
+/* STEPS TAKEN */
+
+/*
+
+Unlike jwt_tutorial, this tutorial doesn't use passportJS for user authentication (LocalStrategy).
+Uses Postman to handle CRUD requests - NO view template/forms.
+
+1) create relevant app.get() & app.post() for the required routes (posts & login)
+2) for app.post('/api/login'), use jwt.sign() to send the user a JWT token (token is defined as an argument). A user object will be assigned to this token, or vice-versa.
+3) create a verifyToken() custom middleware function to process the header request to assign the bearerToken to req.token.
+4) for app.post('/api/posts'), use jwt.verify() and pass the verifyToken() middlewareto authenticate the user's JWT token - the method will also contain the user information (authData) based on the matching token.
+
+*/
